@@ -11,7 +11,14 @@ import android.widget.Toast
  * Created by kanghuicong on 2017/3/1.
  * QQ邮箱:515849594@qq.com
  */
-class Adapter(private var context: Context, emptyDays: Int, private var monthDay: Int, private var toDay: Int, private var allDays: Int, private var calendarBeanList: MutableList<CalendarBean>?) : BaseAdapter(), SignInData.ISignIn {
+class Adapter(
+        private var context: Context,
+        emptyDays: Int,
+        private var monthDay: Int,
+        private var toDay: Int,
+        private var allDays: Int,
+        private var calendarBeanList: MutableList<CalendarBean>?
+) : BaseAdapter(), SignInData.ISignIn {
     private var holder: Holder? = null
     private var emptyDays: Int = 0
     private var signInData: SignInData
@@ -21,106 +28,100 @@ class Adapter(private var context: Context, emptyDays: Int, private var monthDay
         this.emptyDays = emptyDays + 7
         width = ScreenUtils.getScreenWidth(context)
         signInData = SignInData(this)
-
     }
 
-    override fun getCount(): Int {
-        return allDays + 7
-    }
+    override fun getCount() = allDays + 7
 
-    override fun getItem(i: Int): Any? {
-        return null
-    }
+    override fun getItem(i: Int) = Unit
 
-    override fun getItemId(i: Int): Long {
-        return 0
-    }
+    override fun getItemId(i: Int) = 0L
 
-    fun getType(position: Int): String {
-        var type = "item"
-        if (position < 7) {
-            type = "title"
-        } else {
-            type = "item"
-        }
-        return type
+    private fun getType(position: Int) = when {
+        position < 7 -> "title"
+        else -> "item"
     }
 
     override fun getView(position: Int, view: View?, viewGroup: ViewGroup): View? {
-        var view = view
+        var convertView = view
         holder = Holder()
-
         when (getType(position)) {
             "title" -> {
                 //标题，周日---周六
-                if (view == null) {
-                    view = View.inflate(context, R.layout.item_title, null)
-                    holder!!.tv_title = view!!.findViewById(R.id.tv_title)
-                    view.tag = holder
+                if (convertView == null) {
+                    convertView = View.inflate(context, R.layout.item_title, null)
+                    holder!!.titleTxT = convertView!!.findViewById(R.id.tv_title)
+                    convertView.tag = holder
                 } else {
-                    holder = view.tag as Holder
+                    holder = convertView.tag as Holder
                 }
-                holder!!.tv_title!!.text = DateUtil.weekName[position]
+                holder!!.titleTxT!!.text = DateUtil.weekName[position]
             }
             "item" -> {
-                if (view == null) {
-                    view = View.inflate(context, R.layout.item, null)
-                    holder!!.tv_item = view!!.findViewById(R.id.tv_item)
-                    view.tag = holder
+                if (convertView == null) {
+                    convertView = View.inflate(context, R.layout.item, null)
+                    holder!!.itemTxT = convertView!!.findViewById(R.id.tv_item)
+                    convertView.tag = holder
                 } else {
-                    holder = view.tag as Holder
+                    holder = convertView.tag as Holder
                 }
 
-                ScreenUtils.accordHeight(holder!!.tv_item!!, width, 1, 7)//根据屏幕宽度适配
+                ScreenUtils.accordHeight(holder!!.itemTxT!!, width, 1, 7)//根据屏幕宽度适配
 
                 if (position >= emptyDays && position < emptyDays + monthDay) {
-                    holder!!.tv_item!!.text = (position - emptyDays + 1).toString() + ""
+                    holder!!.itemTxT!!.text = "${position - emptyDays + 1}"
                     //点击事件
-                    holder!!.tv_item!!.setOnClickListener(clickDay(holder!!.tv_item!!, position, position - emptyDays + 1, toDay, calendarBeanList!![position - emptyDays].type))
+                    holder!!.itemTxT!!.setOnClickListener(ClickDay(
+                            holder!!.itemTxT!!,
+                            position,
+                            position - emptyDays + 1,
+                            toDay,
+                            calendarBeanList!![position - emptyDays].type
+                    ))
                 } else {
-                    holder!!.tv_item!!.text = ""
+                    holder!!.itemTxT!!.text = ""
                 }
 
-                if (position >= emptyDays && position - emptyDays < toDay) {
-                    if (calendarBeanList != null && calendarBeanList!!.size > 0) {
-                        if ("true" == calendarBeanList!![position - emptyDays].type) {
-                            holder!!.tv_item!!.setBackgroundResource(R.color.colorAccent)
-                        } else {
-                            holder!!.tv_item!!.setBackgroundResource(R.color.white)
+                when {
+                    position >= emptyDays && position - emptyDays < toDay -> when {
+                        calendarBeanList != null && calendarBeanList!!.size > 0 -> when {
+                            "true" == calendarBeanList!![position - emptyDays].type ->
+                                holder!!.itemTxT!!.setBackgroundResource(R.color.colorAccent)
+                            else -> holder!!.itemTxT!!.setBackgroundResource(R.color.white)
                         }
                     }
-                } else {
-                    holder!!.tv_item!!.setBackgroundResource(R.color.white)
+                    else -> holder!!.itemTxT!!.setBackgroundResource(R.color.white)
                 }
             }
         }
-        return view
+        return convertView
     }
 
-    private inner class clickDay(private var tv: TextView, private var position: Int, private var clickDay: Int, private var toDay: Int, private var type: String) : View.OnClickListener {
+    inner class ClickDay(
+            private var tv: TextView,
+            private var position: Int,
+            private var clickDay: Int,
+            private var toDay: Int,
+            private var type: String
+    ) : View.OnClickListener {
 
         override fun onClick(view: View) {
-            if (0 < clickDay && clickDay < toDay) {
-                if ("true" != type) {
-                    signInData.getScoreData(position, tv)
-                } else {
-                    Toast.makeText(context, "都签过了还补签啥啊你！", Toast.LENGTH_SHORT).show()
+            when {
+                clickDay in 1..(toDay - 1) -> when {
+                    "true" != type -> signInData.getScoreData(position, tv)
+                    else -> Toast.makeText(context, "都签过了还补签啥啊你！", Toast.LENGTH_SHORT).show()
                 }
-            } else if (clickDay == toDay) {
-                if ("true" != type) {
-                    signInData.getSignData(position)
-                } else {
-                    Toast.makeText(context, "坑货，你今天签过到了、想骗积分？", Toast.LENGTH_SHORT).show()
+                clickDay == toDay -> when {
+                    "true" != type -> signInData.getSignData(position)
+                    else -> Toast.makeText(context, "坑货，你今天签过到了、想骗积分？", Toast.LENGTH_SHORT).show()
                 }
-            } else if (clickDay > toDay) {
-                Toast.makeText(context, "瞎点啥，还没到这一天呢", Toast.LENGTH_SHORT).show()
+                clickDay > toDay -> Toast.makeText(context, "瞎点啥，还没到这一天呢", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
 
     override fun getSore(data: Int, position: Int, tv: TextView) {
-        Dialog.getCalendarDialog(context, data, object : Dialog.ICalendar {
+        CustomDialog.getCalendarDialog(context, data, object : CustomDialog.ICalendar {
             override fun getCalendar() {
                 Toast.makeText(context, "-10积分", Toast.LENGTH_SHORT).show()
                 tv.setBackgroundResource(R.color.colorAccent)
@@ -137,9 +138,7 @@ class Adapter(private var context: Context, emptyDays: Int, private var monthDay
         })
     }
 
-    override fun defeatSore() {
-
-    }
+    override fun defeatSore() = Unit
 
     override fun getSign(position: Int) {
         Toast.makeText(context, "签到成功，送你一个积分吧", Toast.LENGTH_SHORT).show()
@@ -155,8 +154,8 @@ class Adapter(private var context: Context, emptyDays: Int, private var monthDay
     }
 
     inner class Holder {
-        var tv_title: TextView? = null
-        var tv_item: TextView? = null
+        var titleTxT: TextView? = null
+        var itemTxT: TextView? = null
     }
 
 

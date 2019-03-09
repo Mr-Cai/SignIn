@@ -1,29 +1,21 @@
 package com.example.kk.mycalendercard
 
+import android.app.Dialog
 import android.content.Context
 import android.view.LayoutInflater
-import android.view.View
 import android.view.Window
-import android.widget.Button
 import android.widget.LinearLayout
-import android.widget.TextView
+import kotlinx.android.synthetic.main.homepage_calendar_pay_dialog.view.*
 
-/**
- * Created by kanghuicong on 2017/3/2.
- * QQ邮箱:515849594@qq.com
- */
-object Dialog {
+object CustomDialog {
 
     fun getCalendarDialog(context: Context, score: Int, iCalendar: ICalendar) {
-        val dialog = android.app.Dialog(context)
+        val dialog = Dialog(context)
         val layout = LayoutInflater.from(context).inflate(R.layout.homepage_calendar_pay_dialog, null) as LinearLayout
-        val tv_content = layout.findViewById<TextView>(R.id.tv_dialog_content)
-        val bt_true = layout.findViewById<Button>(R.id.btn_true)
-        val bt_false = layout.findViewById<Button>(R.id.btn_false)
         addDialog(dialog, layout)
 
-        tv_content.text = "是否花费10积分补签？(剩余" + score + "积分)"
-        bt_true.setOnClickListener {
+        layout.tv_dialog_content.text = String.format(context.resources.getString(R.string.spend), score)
+        layout.btn_true.setOnClickListener {
             if (score >= 10) {
                 iCalendar.getCalendar()
             } else {
@@ -32,7 +24,7 @@ object Dialog {
             dialog.dismiss()
         }
 
-        bt_false.setOnClickListener { dialog.dismiss() }
+        layout.btn_false.setOnClickListener { dialog.dismiss() }
     }
 
     private fun addDialog(dialog: android.app.Dialog, layout: LinearLayout) {

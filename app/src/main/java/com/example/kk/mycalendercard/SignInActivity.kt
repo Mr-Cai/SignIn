@@ -16,16 +16,16 @@ class SignInActivity : AppCompatActivity() {
 
         gvCalendar = findViewById(R.id.gv_calendar)
 
-        val Year = DateUtil.year
-        val Month = DateUtil.month
-        val Day = DateUtil.day
+        val year = DateUtil.year
+        val month = DateUtil.month
+        val toDay = DateUtil.day
 
-        val MonthDays = DateUtil.getMonthDays(Year, Month)//该Month的天数
-        val FirstDay = DateUtil.getDayOfWeek(Year, 21, Month, 1)//一号周几
-        val EmptyDays = FirstDay - 1//表格状，如果一号周二，则空了周日，周一
-        val AllDays = ((EmptyDays + MonthDays) / 7 + 1) * 7//所有天数，把表格填满，7的倍数
+        val monthDays = DateUtil.getMonthDays(year, month)//该Month的天数
+        val firstDays = DateUtil.getDayOfWeek(year, 21, month, 1)//一号周几
+        val emptyDays = firstDays - 1//表格状，如果一号周二，则空了周日，周一
+        val allDays = ((emptyDays + monthDays) / 7 + 1) * 7//所有天数，把表格填满，7的倍数
 
-        for (i in 1..MonthDays) {
+        for (i in 1..monthDays) {
             val calendarBean = CalendarBean()
             calendarBean.day = i
             calendarBean.type = "false"
@@ -36,7 +36,7 @@ class SignInActivity : AppCompatActivity() {
             //当然，如果不用后台，也可以保存在本地数据库
         }
 
-        calendarAdapter = Adapter(this, EmptyDays, MonthDays, Day, AllDays, calendarBeanList)
+        calendarAdapter = Adapter(this, emptyDays, monthDays, toDay, allDays, calendarBeanList)
         gvCalendar!!.adapter = calendarAdapter
     }
 }

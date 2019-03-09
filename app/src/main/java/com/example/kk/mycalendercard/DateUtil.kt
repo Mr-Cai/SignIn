@@ -1,11 +1,7 @@
 package com.example.kk.mycalendercard
 
-import java.util.Calendar
+import java.util.*
 
-/**
- * Created by kanghuicong on 2017/3/1.
- * QQ邮箱:515849594@qq.com
- */
 object DateUtil {
 
     var weekName = arrayOf("周日", "周一", "周二", "周三", "周四", "周五", "周六")
@@ -62,18 +58,18 @@ object DateUtil {
     }
 
     fun getDayOfWeek(y: Int, c: Int, m: Int, d: Int): Int {
-        var y = y
-        var m = m
-        if (m == 1) {
-            m = 13
-            y = y - 1
-        } else if (m == 2) {
-            m = 14
-            y = y - 1
+        var year = y
+        var month = m
+        if (month == 1) {
+            month = 13
+            year -= 1
+        } else if (month == 2) {
+            month = 14
+            year -= 1
         }
-        var tempDate = (y + y / 4 + c / 4 - 2 * c + 26 * (m + 1) / 10 + d - 1) % 7
+        var tempDate = (year + year / 4 + c / 4 - 2 * c + 26 * (month + 1) / 10 + d - 1) % 7
         if (tempDate < 0) {
-            tempDate = 7 + tempDate
+            tempDate += 7
         }
 
         //7123456
