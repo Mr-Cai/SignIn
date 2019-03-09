@@ -7,10 +7,6 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import android.widget.Toast
 
-/**
- * Created by kanghuicong on 2017/3/1.
- * QQ邮箱:515849594@qq.com
- */
 class Adapter(
         private var context: Context,
         emptyDays: Int,
@@ -64,8 +60,6 @@ class Adapter(
                 } else {
                     holder = convertView.tag as Holder
                 }
-
-                ScreenUtils.accordHeight(holder!!.itemTxT!!, width, 1, 7)//根据屏幕宽度适配
 
                 if (position >= emptyDays && position < emptyDays + monthDay) {
                     holder!!.itemTxT!!.text = "${position - emptyDays + 1}"
