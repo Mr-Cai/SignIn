@@ -1,9 +1,9 @@
 package com.example.kk.mycalendercard
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.GridView
-import java.util.ArrayList
+import androidx.appcompat.app.AppCompatActivity
+import java.util.*
 
 class SignInActivity : AppCompatActivity() {
     internal var gvCalendar: GridView? = null
